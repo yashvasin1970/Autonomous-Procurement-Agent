@@ -1,0 +1,7 @@
+streamlit>=1.32
+pandas>=2.0
+pypdf>=4.0
+openpyxl>=3.1
+pytest>=8.0
+# Optional: enables Claude-based extraction. Set ANTHROPIC_API_KEY to use it.
+anthropic>=0.40

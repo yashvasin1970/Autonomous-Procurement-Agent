@@ -1,0 +1,7 @@
+Vendor: Nimbus Traders
+Processor: Intel Core i5-1235U
+RAM: 16 GB
+Storage: 512 GB SSD
+Unit price: ₹49,000 per unit
+Delivery: 14 days
+Support: email helpdesk, 9am to 6pm on working days

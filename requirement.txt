@@ -1,0 +1,5 @@
+Purchase request: 20 laptops for the design team.
+We need to buy 20 laptops for the design team. Minimum processor i5, at least 16 GB RAM and at least 512 GB SSD.
+Budget limit is ₹60K per unit.
+Warranty of at least 2 years.
+Delivery within 30 days of purchase order.

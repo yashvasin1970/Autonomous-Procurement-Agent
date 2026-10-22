@@ -1,0 +1,7 @@
+Vendor: Summit Systems
+Processor: Intel Core i7-1260P
+RAM: 16 GB
+Storage: 1 TB PCIe SSD
+Unit price: INR 72,000
+Warranty: 2 years
+Delivery: 14 days
