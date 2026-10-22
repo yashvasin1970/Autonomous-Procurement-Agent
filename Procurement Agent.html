@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Procurement Agent</title>
+<style>
+:root{--bg:#f5f6f8;--surface:#fff;--ink:#14181f;--muted:#5b6472;--line:#e2e5ea;--accent:#2f5bea;--pass:#15803d;--pass-bg:#e7f5ec;--fail:#b91c1c;--fail-bg:#fdecea;--warn:#8a5a00;--warn-bg:#fdf3d8;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1117;--surface:#171c25;--ink:#e7eaf0;--muted:#98a1b0;--line:#2a3142;--accent:#7f9bff;--pass:#4ade80;--pass-bg:#15301f;--fail:#f87171;--fail-bg:#3a1d20;--warn:#fbbf24;--warn-bg:#342a10;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+header{padding:20px 24px;border-bottom:1px solid var(--line);background:var(--surface);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+h1{font-size:20px;margin:0}header p{margin:2px 0 0;color:var(--muted);font-size:14px}
+h2{font-size:15px;margin:0 0 10px}
+main{max-width:1200px;margin:0 auto;padding:20px 16px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.stack{display:grid;gap:16px;align-content:start;min-width:0}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:12px}
+textarea{resize:vertical}
+button{font:inherit;border-radius:8px;padding:9px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;width:100%}
+button.ghost{padding:6px 10px;font-size:13px}
+button.link{border:0;background:none;color:var(--accent);padding:0;font-size:13px}
+button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.drop{display:block;border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--muted);cursor:pointer;margin-bottom:12px}
+.drop.over{border-color:var(--accent);color:var(--ink)}
+.drop u{color:var(--accent)}
+ul.files{list-style:none;padding:0;margin:0 0 12px;display:grid;gap:6px}
+ul.files li{display:flex;justify-content:space-between;background:var(--bg);border-radius:8px;padding:7px 10px;font-size:14px;gap:8px}
+small,.muted{color:var(--muted);font-size:13px}
+.err{color:var(--fail);font-size:14px;min-height:1em;margin:8px 0 0}
+.empty{text-align:center;color:var(--muted);padding:48px 16px}
+.banner{border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:500}
+.banner.ok{background:var(--pass-bg);color:var(--pass)}.banner.warn{background:var(--warn-bg);color:var(--warn)}.banner.bad{background:var(--fail-bg);color:var(--fail)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi b{display:block;font-size:24px}.kpi span{color:var(--muted);font-size:13px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:500;font-size:13px}
+.badge{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+.badge.pass{background:var(--pass-bg);color:var(--pass)}.badge.fail{background:var(--fail-bg);color:var(--fail)}.badge.needs-review{background:var(--warn-bg);color:var(--warn)}
+.rec{border-color:var(--pass);border-width:2px}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+ul.checks{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}
+ul.checks li{padding-left:24px;position:relative}
+ul.checks li::before{position:absolute;left:0;font-weight:700}
+ul.checks .PASS::before{content:"✓";color:var(--pass)}ul.checks .FAIL::before{content:"✗";color:var(--fail)}ul.checks .UNKNOWN::before{content:"?";color:var(--warn)}
+ul.list{margin:0;padding-left:18px;display:grid;gap:6px}
+ol.trace{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+ol.trace li{border-left:3px solid var(--line);padding:2px 0 2px 12px;font-size:14px}
+ol.trace li.ok{border-color:var(--pass)}ol.trace li.warn{border-color:var(--warn)}ol.trace li.error{border-color:var(--fail)}
+ol.trace b{color:var(--accent);font-size:12px;letter-spacing:.04em;margin-right:6px}
+.warnbox{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:14px;margin-top:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions button{flex:1}
+footer{max-width:1200px;margin:0 auto;padding:8px 16px 32px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Procurement Agent</h1><p>Requirement → quotations → compliant recommendation → human approval</p></div>
+  <span class="badge pass" style="background:var(--surface);color:var(--muted);border:1px solid var(--line)">Runs in your browser</span>
+</header>
+
+<main>
+  <div class="stack">
+    <section class="card">
+      <div class="row"><h2>1 · Purchase request</h2><button class="ghost" id="loadSample">Load sample</button></div>
+      <textarea id="req" rows="8" aria-label="Purchase request" placeholder="Describe what you need, with measurable limits: processor, RAM, storage, budget, warranty, delivery."></textarea>
+    </section>
+    <section class="card">
+      <h2>2 · Vendor quotations</h2>
+      <label class="drop" id="drop">Drop files here or <u>browse</u><br><small>TXT, MD, CSV, EML</small>
+        <input type="file" id="files" multiple accept=".txt,.md,.csv,.eml" hidden></label>
+      <ul class="files" id="fileList"></ul>
+      <button class="primary" id="run">Run agent</button>
+      <p class="err" id="err" role="alert"></p>
+    </section>
+  </div>
+  <div class="stack" id="results" aria-live="polite">
+    <section class="card empty">Load the sample or enter your own request and quotations, then run the agent.</section>
+  </div>
+</main>
+<footer>Rule-based engine. Every value shown is quoted from a source document, and every decision waits for a named approver. For PDF, XLSX and Claude-powered extraction, use the Streamlit app in the project.</footer>
+
+<script id="engine">
+const SPEC_KEYS=["unit_price","cpu","ram_gb","storage_gb","warranty_months","delivery_days"];
+const WORDS={one:1,two:2,three:3,four:4,five:5};
+const CPU_TIERS={i3:1,i5:2,ryzen5:2,i7:3,ryzen7:3,i9:4,ryzen9:4};
+const OP_WORDS={">=":"at least","<=":"at most",min_tier:"at least"};
+const CUR=/(?:₹|\bRs\.?|\bINR)\s*(\d[\d,]*(?:\.\d+)?)\s*(lakh|lac|k)?\b/i;
+const SUF=/\b(\d[\d,]*(?:\.\d+)?)\s*(lakh|lac|k)\b/i;
+const PLAIN=/\b(\d{1,3}(?:,\d{2,3})+|\d{4,})(?:\.\d+)?\b/;
+const VENDOR=/^\s*(?:vendor|supplier|company|seller)\s*[:|\-]\s*(.+?)\s*$/i;
+const STATUS={AWAITING_APPROVAL:"Recommendation ready, awaiting human approval",NEEDS_CLARIFICATION:"Paused: clarification needed before a recommendation",NO_COMPLIANT_QUOTE:"No quotation satisfies every mandatory requirement"};
+
+const amount=(n,s)=>{let v=parseFloat(n.replace(/,/g,""));if(s)v*=/lakh|lac/i.test(s)?1e5:1e3;return v};
+function parseMoney(t,strict){let m=CUR.exec(t)||SUF.exec(t);if(m)return amount(m[1],m[2]);if(!strict){m=PLAIN.exec(t);if(m)return amount(m[1])}return null}
+const wordInt=t=>/^\d+$/.test(t)?parseInt(t,10):WORDS[t.toLowerCase()];
+const normCpu=s=>s.trim().toLowerCase().replace(/ryzen\s*/g,"ryzen ");
+const fmtN=n=>Math.round(n).toLocaleString("en-US");
+const normText=s=>s.replace(/\s+/g," ").trim().toLowerCase();
+function fmt(k,v){if(v==null)return"not stated";
+  if(k==="unit_price")return"₹"+fmtN(v);
+  if(k==="storage_gb")return v>=1024&&v%1024===0?(v/1024)+" TB":fmtN(v)+" GB";
+  if(k==="ram_gb")return fmtN(v)+" GB";
+  if(k==="warranty_months")return v+" months";
+  if(k==="delivery_days")return v+" days";
+  return String(v)}
+
+function parseRequirement(text){
+  const flat=text.split(/\s+/).filter(Boolean).join(" ");const crit=[];let m;
+  m=/\b(?:buy|purchase|need|order|procure)\w*\s+(\d+)\b/i.exec(flat);const quantity=m?+m[1]:null;
+  m=/(?:minimum|min\.?|at least)\s+(?:processor\s+|cpu\s+)?(i[3579]|ryzen\s?[3579])\b/i.exec(flat);
+  if(m){const c=normCpu(m[1]);crit.push({key:"cpu",op:"min_tier",value:c,label:`Processor (min ${c})`})}
+  m=/(?:(?:at least|minimum|min\.?)\s+)?(\d+)\s*GB\s*(?:of\s+)?RAM\b/i.exec(flat);
+  if(m)crit.push({key:"ram_gb",op:">=",value:+m[1],label:`RAM (min ${m[1]} GB)`});
+  m=/(?:(?:at least|minimum|min\.?)\s+)?(\d+)\s*(GB|TB)\s*(?:of\s+)?(?:SSD|storage)\b/i.exec(flat);
+  if(m){const u=m[2].toUpperCase();crit.push({key:"storage_gb",op:">=",value:+m[1]*(u==="TB"?1024:1),label:`Storage (min ${m[1]} ${u})`})}
+  for(const s of text.split(/(?<=[.!?])\s+|\n+/)){
+    if(/budget|limit|maximum|up to|under|\bmax\b/i.test(s)&&/unit|each|per/i.test(s)){const a=parseMoney(s,true);if(a){crit.push({key:"unit_price",op:"<=",value:a,label:`Unit price (max ₹${fmtN(a)})`});break}}
+  }
+  m=/warranty[^.\n]*?(\d+|one|two|three|four|five)\s*(year|month)s?\b/i.exec(flat);
+  if(m){const mo=wordInt(m[1])*(/year/i.test(m[2])?12:1);crit.push({key:"warranty_months",op:">=",value:mo,label:`Warranty (min ${mo} months)`})}
+  m=/deliver\w*[^.\n]*?(?:within|in|under|by)\s+(\d+)\s*(day|week)s?\b/i.exec(flat);
+  if(m){const d=+m[1]*(/week/i.test(m[2])?7:1);crit.push({key:"delivery_days",op:"<=",value:d,label:`Delivery (max ${d} days)`})}
+  return{text,quantity,criteria:crit};
+}
+
+function extractFields(text){
+  const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
+  const pick=(pred,ext)=>{for(const line of lines){if(pred(line.toLowerCase())){const v=ext(line);if(v!=null)return[v,line]}}return[null,null]};
+  const rules={
+    vendor:[()=>true,l=>{const m=VENDOR.exec(l);return m?m[1]:null}],
+    unit_price:[l=>(l.includes("price")||l.includes("unit cost"))&&!l.includes("total"),l=>parseMoney(l,false)],
+    cpu:[l=>l.includes("processor")||l.includes("cpu"),l=>{const m=/\b(i[3579]|ryzen\s?[3579])\b/i.exec(l);return m?normCpu(m[1]):null}],
+    ram_gb:[l=>/\bram\b|memory/.test(l),l=>{const m=/(\d+)\s*GB/i.exec(l);return m?+m[1]:null}],
+    storage_gb:[l=>/ssd|storage|hdd|hard drive/.test(l),l=>{const m=/(\d+(?:\.\d+)?)\s*(GB|TB)\b/i.exec(l);return m?Math.trunc(+m[1]*(/tb/i.test(m[2])?1024:1)):null}],
+    warranty_months:[l=>l.includes("warranty"),l=>{const m=/\b(\d+|one|two|three|four|five)\s*(year|yr|month)s?\b/i.exec(l);if(!m)return null;const n=wordInt(m[1]);return/year|yr/i.test(m[2])?n*12:n}],
+    delivery_days:[l=>/deliver|lead time|dispatch/.test(l),l=>{const m=/(\d+)\s*(?:business\s+|working\s+|calendar\s+)?(day|week)s?\b/i.exec(l);return m?+m[1]*(/week/i.test(m[2])?7:1):null}]
+  };
+  const values={},evidence={};
+  for(const[k,[p,e]]of Object.entries(rules)){const[v,line]=pick(p,e);if(v!=null){values[k]=v;evidence[k]=line}}
+  return{values,evidence};
+}
+
+function buildQuote(name,text){
+  const{values:v,evidence:e}=extractFields(text);
+  const vals={};for(const k of["vendor",...SPEC_KEYS])vals[k]=v[k]??null;
+  const vendor=vals.vendor||name.replace(/\.[^.]+$/,"").replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+  return{source:name,text,values:vals,evidence:e,vendor};
+}
+
+const tier=c=>c==null?undefined:CPU_TIERS[String(c).toLowerCase().replace(/\s+/g,"")];
+function check(c,q){
+  const actual=q.values[c.key],label=c.label;
+  if(actual==null)return{key:c.key,label,status:"UNKNOWN",actual:null,reason:`${label}: not stated in the quotation; clarification needed.`};
+  let ok,req;
+  if(c.op==="min_tier"){const ar=tier(actual),rr=tier(c.value);
+    if(ar==null||rr==null)return{key:c.key,label,status:"UNKNOWN",actual,reason:`${label}: processor '${actual}' is not recognised; clarification needed.`};
+    ok=ar>=rr;req=c.value}
+  else{ok=c.op===">="?actual>=c.value:actual<=c.value;req=fmt(c.key,c.value)}
+  const shown=fmt(c.key,actual);
+  return ok?{key:c.key,label,status:"PASS",actual,reason:`${label}: quoted ${shown}, meets the requirement.`}
+           :{key:c.key,label,status:"FAIL",actual,reason:`${label}: quoted ${shown}, but the requirement is ${OP_WORDS[c.op]} ${req}.`};
+}
+function verdictFor(checks){
+  if(checks.some(c=>c.status==="FAIL"))return"FAIL";
+  if(checks.some(c=>c.status==="UNKNOWN"))return"NEEDS_REVIEW";
+  return"PASS";
+}
+function detectAnomalies(as){
+  const prices=as.map(a=>a.quote.values.unit_price).filter(Boolean);
+  if(prices.length<3)return;
+  const s=[...prices].sort((a,b)=>a-b),mid=s.length/2;
+  const med=s.length%2?s[mid-0.5]:(s[mid-1]+s[mid])/2;
+  for(const a of as){const p=a.quote.values.unit_price;
+    if(p&&p<0.9*med){const gap=Math.round((1-p/med)*100);
+      a.flags.push(`Unit price ${fmt("unit_price",p)} is ${gap}% below the median of all quotes (${fmt("unit_price",med)}); confirm scope and line items before relying on it.`)}}
+}
+function scorePassing(as){
+  const pass=as.filter(a=>a.verdict==="PASS");if(!pass.length)return;
+  const col=k=>pass.map(a=>a.quote.values[k]).filter(Boolean);
+  const bp=Math.min(...col("unit_price")),bw=Math.max(...col("warranty_months")),bd=Math.min(...col("delivery_days"));
+  for(const a of pass){const v=a.quote.values,p=v.unit_price,w=v.warranty_months,d=v.delivery_days;let s=0;
+    if(p&&bp)s+=0.6*bp/p;if(w&&bw)s+=0.2*w/bw;if(d&&bd)s+=0.2*bd/d;
+    a.score=Math.round(s*1000)/10;const n=[];
+    if(p&&bp)n.push(p===bp?"Lowest compliant unit price.":`${fmt("unit_price",p-bp)} per unit above the lowest compliant price.`);
+    if(w&&bw)n.push(w===bw?`Longest warranty among compliant quotes (${fmt("warranty_months",w)}).`:`Warranty ${fmt("warranty_months",w)} vs ${fmt("warranty_months",bw)} best offered.`);
+    if(d&&bd)n.push(d===bd?`Fastest delivery among compliant quotes (${fmt("delivery_days",d)}).`:`Delivery ${fmt("delivery_days",d)} vs ${fmt("delivery_days",bd)} fastest.`);
+    a.notes=n}
+}
+const RANK={PASS:0,NEEDS_REVIEW:1,FAIL:2};
+const rankOf=as=>[...as].sort((a,b)=>RANK[a.verdict]-RANK[b.verdict]||(a.flags.length>0)-(b.flags.length>0)||(b.score||0)-(a.score||0)||a.vendor.localeCompare(b.vendor));
+
+function verify(rec,as){
+  const out=[];
+  if(!rec){out.push({name:"A recommendation exists",passed:false,detail:"No quotation passes every mandatory criterion without open flags."});return out}
+  const failing=rec.checks.filter(c=>c.status!=="PASS").map(c=>c.label);
+  out.push({name:"Recommended quote satisfies every mandatory criterion",passed:!failing.length,detail:failing.length?"Not proven: "+failing.join(", "):"All mandatory criteria are proven by the quotation."});
+  const best=as.filter(a=>a.verdict==="PASS"&&!a.flags.length).reduce((b,a)=>(a.score||0)>(b.score||0)?a:b);
+  out.push({name:"Recommendation is the highest-scoring eligible quote",passed:best===rec,detail:`${rec.vendor} scores ${rec.score}; best eligible is ${best.vendor} at ${best.score}.`});
+  const bad=[];for(const a of as){const doc=normText(a.quote.text);for(const[k,s]of Object.entries(a.quote.evidence))if(!doc.includes(normText(s)))bad.push(`${a.vendor} (${k})`)}
+  out.push({name:"Every extracted value is traceable to its source text",passed:!bad.length,detail:bad.length?"Untraceable: "+bad.join(", "):"All evidence snippets were found in the source documents."});
+  out.push({name:"No open anomaly on the recommended quote",passed:!rec.flags.length,detail:rec.flags.length?rec.flags.join("; "):"No anomaly flags."});
+  out.push({name:"Consequential action requires human approval",passed:true,detail:"Nothing is sent to a vendor until a named approver signs off."});
+  return out;
+}
+
+function runAgent(reqText,docs){
+  const trace=[];const step=(stage,title,detail="",status="ok")=>trace.push({stage,title,detail,status});
+  const id=Math.random().toString(16).slice(2,10);
+  step("INPUT","Purchase request received",`${reqText.split(/\s+/).filter(Boolean).length} words, ${docs.length} quotation document(s).`);
+  const req=parseRequirement(reqText);
+  const done=(status,extra={})=>({id,created:new Date().toISOString().slice(0,19)+"Z",requirement:req,assessments:[],recommendation:null,verification:[],clarifications:[],gaps:[],trace,status,draft:"",...extra});
+  if(!req.criteria.length){
+    step("PLAN","No measurable criteria found","Nothing to check quotations against.","error");
+    return done("NEEDS_CLARIFICATION",{clarifications:["The request has no measurable criteria (processor, RAM, storage, budget, warranty or delivery). Please restate it with specific figures."]});
+  }
+  step("PLAN","Mandatory criteria extracted",req.criteria.map(c=>c.label).join("; "));
+
+  const quotes=[],gaps=[];
+  for(const d of docs){
+    if(!d.text.trim()){gaps.push(`${d.name} has no readable text. Please resend a text-based file.`);step("TOOL_USE",`No text in ${d.name}`,"",'warn');continue}
+    const q=buildQuote(d.name,d.text);quotes.push(q);
+    const found=SPEC_KEYS.filter(k=>q.values[k]!=null).length;
+    step("TOOL_USE",`Read ${d.name}`,`Vendor: ${q.vendor}; ${found}/${SPEC_KEYS.length} fields found; method: rule-based`);
+  }
+  for(const q of quotes){const miss=SPEC_KEYS.filter(k=>q.values[k]==null);
+    step("NORMALIZE",`${q.vendor}: mapped to common schema`,miss.length?"Missing: "+miss.join(", "):"All fields mapped.",miss.length?"warn":"ok")}
+
+  const as=quotes.map(q=>{const checks=req.criteria.map(c=>check(c,q));
+    const verdict=verdictFor(checks);
+    const detail=checks.filter(c=>c.status!=="PASS").map(c=>c.reason).join(" ")||"Meets every mandatory criterion.";
+    step("CONSTRAINT",`${q.vendor}: ${verdict}`,detail,{PASS:"ok",NEEDS_REVIEW:"warn",FAIL:"error"}[verdict]);
+    return{quote:q,vendor:q.vendor,checks,verdict,score:null,flags:[],notes:[]}});
+
+  detectAnomalies(as);scorePassing(as);
+  const passing=as.filter(a=>a.verdict==="PASS");
+  step("COMPARE","Scored compliant quotes",`${passing.length} of ${as.length} quotation(s) pass every mandatory criterion.`);
+  for(const a of as)for(const f of a.flags)step("COMPARE",`Anomaly flagged: ${a.vendor}`,f,"warn");
+
+  const ranked=rankOf(as);
+  const cands=as.filter(a=>a.verdict==="PASS"&&!a.flags.length);
+  const rec=cands.length?cands.reduce((b,a)=>(a.score||0)>(b.score||0)?a:b):null;
+
+  const clar=[...gaps];
+  for(const a of as){for(const c of a.checks.filter(c=>c.status==="UNKNOWN"))clar.push(`${a.vendor}: please confirm '${c.label}', which is not stated in the quotation.`);
+    for(const f of a.flags)clar.push(`${a.vendor}: ${f}`)}
+  if(clar.length)step("RECOVER",`${clar.length} open item(s) escalated`,"Values the documents do not state are not invented; a person must resolve them.","warn");
+
+  const ver=verify(rec,as);
+  for(const v of ver)step("VERIFY",v.name,v.detail,v.passed?"ok":"warn");
+
+  let status,draft="";
+  if(rec){
+    step("RECOMMEND",`Recommend ${rec.vendor}`,`Score ${rec.score}/100. ${rec.notes.join(" ")}`);
+    const qty=req.quantity?`${req.quantity} units`:"the requested items";
+    draft=`Subject: Quotation under review - ${qty}\n\nDear ${rec.vendor},\n\nThank you for your quotation. Your offer for ${qty} at ${fmt("unit_price",rec.quote.values.unit_price)} per unit is under review. Before a purchase order is issued, please confirm in writing the stock availability, delivery timeline and warranty terms.\n\nRegards,\nProcurement Team`;
+    step("ACTION","Vendor message drafted (not sent)","Held until a named approver signs off.");
+    status=ver.every(v=>v.passed)?"AWAITING_APPROVAL":"NEEDS_CLARIFICATION";
+  }else{
+    step("RECOMMEND","No recommendation issued","No quotation passes every check without open items.","warn");
+    status=clar.length?"NEEDS_CLARIFICATION":"NO_COMPLIANT_QUOTE";
+  }
+  step("APPROVAL",status==="AWAITING_APPROVAL"?"Waiting for human approval":"Waiting for clarification","No vendor action is taken automatically.");
+  return done(status,{assessments:ranked,recommendation:rec,verification:ver,clarifications:clar,gaps,draft});
+}
+</script>
+
+<script id="ui">
+const SAMPLE_REQ=`Purchase request: 20 laptops for the design team.
+We need to buy 20 laptops for the design team. Minimum processor i5, at least 16 GB RAM and at least 512 GB SSD.
+Budget limit is ₹60K per unit.
+Warranty of at least 2 years.
+Delivery within 30 days of purchase order.`;
+const SAMPLE_DOCS=[
+ {name:"vendor_a.txt",text:"QUOTATION No. AC-2026-0412\nVendor: Apex Computers Pvt Ltd\nDate: 14 October 2026\n\nItem: Business laptop (20 units)\nProcessor: Intel Core i5-1235U\nRAM: 16 GB DDR4\nStorage: 512 GB NVMe SSD\nUnit price: ₹55,000 per unit (excluding GST)\nWarranty: 3 years on-site\nDelivery: 21 days from purchase order\nQuote valid for 30 days."},
+ {name:"vendor_b.txt",text:"Vendor: Budget Byte Ltd\nQuotation ref: BB/Q/0991\nProcessor: Intel Core i5-1135G7\nMemory (RAM): 8 GB DDR4\nStorage: 512 GB SSD\nUnit price: Rs. 51,000 per unit\nWarranty: 2 years carry-in\nDelivery: 10 days"},
+ {name:"vendor_c.txt",text:"Vendor: Summit Systems\nProcessor: Intel Core i7-1260P\nRAM: 16 GB\nStorage: 1 TB PCIe SSD\nUnit price: INR 72,000\nWarranty: 2 years\nDelivery: 14 days"},
+ {name:"vendor_d_spreadsheet.txt",text:"Vendor | Delta Tech Pvt Ltd\nProcessor | Intel Core i5\nRAM | 16 GB DDR4\nStorage | 512 GB SSD\nUnit price (INR) | 58,000\nWarranty | 2 years\nDelivery | 30 days"},
+ {name:"vendor_e.txt",text:"Vendor: Nimbus Traders\nProcessor: Intel Core i5-1235U\nRAM: 16 GB\nStorage: 512 GB SSD\nUnit price: ₹49,000 per unit\nDelivery: 14 days\nSupport: email helpdesk, 9am to 6pm on working days"}
+];
+const state={docs:[],run:null,audit:[],decision:null};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const badge=v=>`<span class="badge ${v.toLowerCase().replace(/_/g,"-")}">${v.replace(/_/g," ")}</span>`;
+const kpi=(n,l)=>`<div class="kpi"><b>${n}</b><span>${l}</span></div>`;
+const download=(name,content,type)=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+
+function renderFiles(){
+  $("fileList").innerHTML=state.docs.length?state.docs.map((d,i)=>`<li><span>${esc(d.name)}</span><button class="link" data-remove="${i}">Remove</button></li>`).join(""):`<li class="muted">No quotations added yet.</li>`;
+}
+function renderTable(r){
+  const v=q=>q.values;
+  return `<div class="scroll"><table><thead><tr><th>#</th><th>Vendor</th><th>Verdict</th><th>Score</th><th>Unit price</th><th>Processor</th><th>RAM</th><th>Storage</th><th>Warranty</th><th>Delivery</th><th>Flags</th></tr></thead><tbody>
+  ${r.assessments.map((a,i)=>`<tr><td>${i+1}</td><td>${esc(a.vendor)}</td><td>${badge(a.verdict)}</td><td>${a.score??"–"}</td><td>${fmt("unit_price",v(a.quote).unit_price)}</td><td>${fmt("cpu",v(a.quote).cpu)}</td><td>${fmt("ram_gb",v(a.quote).ram_gb)}</td><td>${fmt("storage_gb",v(a.quote).storage_gb)}</td><td>${fmt("warranty_months",v(a.quote).warranty_months)}</td><td>${fmt("delivery_days",v(a.quote).delivery_days)}</td><td>${a.flags.length?"Yes":""}</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+function evidenceHtml(a,isRec){
+  return `<details ${isRec?"open":""}><summary>${esc(a.vendor)} ${badge(a.verdict)}</summary>
+   <ul class="checks">${a.checks.map(c=>`<li class="${c.status}">${esc(c.reason)}${a.quote.evidence[c.key]?`<br><small>Source: “${esc(a.quote.evidence[c.key])}”</small>`:""}</li>`).join("")}</ul>
+   ${a.flags.map(f=>`<div class="warnbox">Anomaly: ${esc(f)}</div>`).join("")}
+   ${a.notes.length?`<p class="muted" style="margin:8px 0 0">${esc(a.notes.join(" "))}</p>`:""}
+  </details>`;
+}
+function approvalHtml(r){
+  if(state.decision&&state.decision.run_id===r.id){const d=state.decision;
+    return `<section class="card"><h2>Approval</h2><div class="banner ${d.decision==="APPROVED"?"ok":"bad"}">${d.decision==="APPROVED"?"Approved":"Rejected"} by ${esc(d.approver)} at ${esc(d.timestamp)}</div><p class="muted">Recorded in the audit log. No vendor message has been sent.</p></section>`}
+  if(r.status!=="AWAITING_APPROVAL")return`<section class="card"><h2>Approval</h2><p class="muted">No approval is needed yet. Resolve the open items and run the agent again.</p></section>`;
+  return `<section class="card"><h2>Approval</h2>
+    <label class="muted" for="draft">Drafted vendor message (held, not sent)</label>
+    <textarea id="draft" rows="6" readonly>${esc(r.draft)}</textarea>
+    <label class="muted" for="approver">Approver name</label><input type="text" id="approver" placeholder="e.g. Priya Nair, Procurement Lead">
+    <label class="muted" for="comment">Comment (optional)</label><input type="text" id="comment">
+    <div class="actions"><button class="primary" data-decide="APPROVED">Approve recommendation</button><button data-decide="REJECTED">Reject</button></div>
+    <p class="err" id="decideMsg" role="alert"></p></section>`;
+}
+function render(){
+  const r=state.run,el=$("results");
+  if(!r){el.innerHTML=`<section class="card empty">Load the sample or enter your own request and quotations, then run the agent.</section>`;return}
+  const cnt=v=>r.assessments.filter(a=>a.verdict===v).length;
+  const tone={AWAITING_APPROVAL:"ok",NEEDS_CLARIFICATION:"warn",NO_COMPLIANT_QUOTE:"bad"}[r.status];
+  el.innerHTML=`
+  <div class="banner ${tone}" role="status"><strong>${esc(STATUS[r.status])}</strong><span class="muted">run ${r.id}</span></div>
+  <div class="kpis">${kpi(r.assessments.length,"Quotations read")}${kpi(cnt("PASS"),"Pass every check")}${kpi(cnt("NEEDS_REVIEW"),"Need clarification")}${kpi(cnt("FAIL"),"Fail a requirement")}</div>
+  <section class="card"><h2>Ranked quotations</h2>${renderTable(r)}</section>
+  ${r.recommendation?`<section class="card rec"><h2>Recommended: ${esc(r.recommendation.vendor)}</h2><p style="margin:0">Score ${r.recommendation.score}/100. ${esc(r.recommendation.notes.join(" "))}</p></section>`:""}
+  <section class="card"><h2>Evidence</h2>${r.assessments.map(a=>evidenceHtml(a,a===r.recommendation)).join("")}</section>
+  <div class="grid2">
+    <section class="card"><h2>Verification</h2><ul class="list">${r.verification.map(v=>`<li>${v.passed?"✅":"❌"} <b>${esc(v.name)}</b><br><small>${esc(v.detail)}</small></li>`).join("")}</ul></section>
+    <section class="card"><h2>Open items</h2>${r.clarifications.length?`<ul class="list">${r.clarifications.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:`<p class="muted" style="margin:0">Nothing open.</p>`}</section>
+  </div>
+  <section class="card"><h2>Agent trace</h2><ol class="trace">${r.trace.map(s=>`<li class="${s.status}"><b>${esc(s.stage)}</b>${esc(s.title)}${s.detail?`<br><small>${esc(s.detail)}</small>`:""}</li>`).join("")}</ol></section>
+  ${approvalHtml(r)}
+  <section class="card"><h2>Export</h2><div class="actions"><button data-export="md">Evidence report (.md)</button><button data-export="json">Run record (.json)</button><button data-export="audit">Audit log (.jsonl)</button></div></section>`;
+}
+function decide(dec){
+  const name=($("approver")?.value||"").trim();
+  if(!name){$("decideMsg").textContent="Enter the approver's name before deciding.";return}
+  const r=state.run;
+  const entry={run_id:r.id,timestamp:new Date().toISOString().slice(0,19)+"Z",decision:dec,approver:name,comment:($("comment")?.value||"").trim(),recommended_vendor:r.recommendation.vendor,recommended_score:r.recommendation.score,run_status:r.status,verification_passed:r.verification.every(v=>v.passed)};
+  state.audit.push(entry);state.decision=entry;render();
+}
+function reportMarkdown(r){
+  const rows=r.assessments.map((a,i)=>`| ${i+1} | ${a.vendor} | ${a.verdict} | ${a.score??"-"} | ${fmt("unit_price",a.quote.values.unit_price)} |`);
+  return [`# Procurement recommendation (run ${r.id})`,"",`*Generated ${r.created}*`,"",`**Status:** ${STATUS[r.status]}`,"",
+  "## Mandatory criteria","",...r.requirement.criteria.map(c=>`- ${c.label}`),"",
+  "## Ranked quotations","","| # | Vendor | Verdict | Score | Unit price |","|---|---|---|---|---|",...rows,"",
+  "## Evidence",...r.assessments.flatMap(a=>[``,`### ${a.vendor} - ${a.verdict}`,...a.checks.map(c=>`- **${c.status==="UNKNOWN"?"OPEN":c.status}** ${c.reason}`),...a.flags.map(f=>`- **ANOMALY** ${f}`)]),"",
+  "## Verification","",...r.verification.map(v=>`- **${v.passed?"PASS":"FAIL"}** ${v.name}: ${v.detail}`),"",
+  "## Open items","",...(r.clarifications.length?r.clarifications.map(c=>`- ${c}`):["- None"]),""].join("\n");
+}
+function exportFile(kind){
+  const r=state.run;
+  if(kind==="md")download(`procurement_${r.id}.md`,reportMarkdown(r),"text/markdown");
+  if(kind==="json")download(`procurement_${r.id}.json`,JSON.stringify(r,null,2),"application/json");
+  if(kind==="audit")download("audit_log.jsonl",state.audit.map(e=>JSON.stringify(e)).join("\n")+"\n","application/x-ndjson");
+}
+function addFiles(list){
+  return Promise.all([...list].map(f=>new Promise((res,rej)=>{
+    if(!/\.(txt|md|csv|eml)$/i.test(f.name)){rej(new Error(`${f.name}: unsupported type. Use TXT, MD, CSV or EML here, or the Streamlit app for PDF/XLSX.`));return}
+    const rd=new FileReader();rd.onload=()=>res({name:f.name,text:String(rd.result)});rd.onerror=()=>rej(new Error(`${f.name} could not be read.`));rd.readAsText(f);
+  }))).then(docs=>{state.docs.push(...docs);renderFiles();$("err").textContent=""}).catch(e=>{$("err").textContent=e.message});
+}
+
+$("loadSample").onclick=()=>{$("req").value=SAMPLE_REQ;state.docs=SAMPLE_DOCS.map(d=>({...d}));renderFiles();$("err").textContent=""};
+$("files").onchange=e=>{addFiles(e.target.files);e.target.value=""};
+const drop=$("drop");
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
+$("fileList").onclick=e=>{const b=e.target.closest("[data-remove]");if(b){state.docs.splice(+b.dataset.remove,1);renderFiles()}};
+$("run").onclick=()=>{
+  const text=$("req").value.trim();
+  if(!text){$("err").textContent="Add a purchase request first.";return}
+  if(!state.docs.length){$("err").textContent="Add at least one quotation, or load the sample.";return}
+  $("err").textContent="";
+  state.run=runAgent(text,state.docs);state.decision=null;render();
+};
+$("results").onclick=e=>{
+  const d=e.target.closest("[data-decide]");if(d){decide(d.dataset.decide);return}
+  const x=e.target.closest("[data-export]");if(x)exportFile(x.dataset.export);
+};
+renderFiles();
+</script>
+</body>
+</html>
