@@ -1,0 +1,74 @@
+Run 037e5a90: Recommendation ready, awaiting human approval
+
+Agent trace
+  [ ok ] INPUT       Purchase request received
+                51 words, 5 quotation document(s).
+  [ ok ] PLAN        Mandatory criteria extracted
+                Processor (min i5); RAM (min 16 GB); Storage (min 512 GB); Unit price (max ₹60,000); Warranty (min 24 months); Delivery (max 30 days)
+  [ ok ] TOOL_USE    Read vendor_a.txt
+                Vendor: Apex Computers Pvt Ltd; 6/6 fields found; method: heuristic
+  [ ok ] TOOL_USE    Read vendor_b.txt
+                Vendor: Budget Byte Ltd; 6/6 fields found; method: heuristic
+  [ ok ] TOOL_USE    Read vendor_c.txt
+                Vendor: Summit Systems; 6/6 fields found; method: heuristic
+  [ ok ] TOOL_USE    Read vendor_d.xlsx
+                Vendor: Delta Tech Pvt Ltd; 6/6 fields found; method: heuristic
+  [ ok ] TOOL_USE    Read vendor_e.txt
+                Vendor: Nimbus Traders; 5/6 fields found; method: heuristic
+  [ ok ] NORMALIZE   Apex Computers Pvt Ltd: mapped to common schema
+                All fields mapped.
+  [ ok ] NORMALIZE   Budget Byte Ltd: mapped to common schema
+                All fields mapped.
+  [ ok ] NORMALIZE   Summit Systems: mapped to common schema
+                All fields mapped.
+  [ ok ] NORMALIZE   Delta Tech Pvt Ltd: mapped to common schema
+                All fields mapped.
+  [warn] NORMALIZE   Nimbus Traders: mapped to common schema
+                Missing: warranty_months
+  [ ok ] CONSTRAINT  Apex Computers Pvt Ltd: PASS
+                Meets every mandatory criterion.
+  [ err] CONSTRAINT  Budget Byte Ltd: FAIL
+                RAM (min 16 GB): quoted 8 GB, but the requirement is at least 16 GB.
+  [ err] CONSTRAINT  Summit Systems: FAIL
+                Unit price (max ₹60,000): quoted ₹72,000, but the requirement is at most ₹60,000.
+  [ ok ] CONSTRAINT  Delta Tech Pvt Ltd: PASS
+                Meets every mandatory criterion.
+  [warn] CONSTRAINT  Nimbus Traders: NEEDS_REVIEW
+                Warranty (min 24 months): not stated in the quotation; clarification needed.
+  [ ok ] COMPARE     Scored compliant quotes
+                2 of 5 quotation(s) pass every mandatory criterion.
+  [warn] COMPARE     Anomaly flagged: Nimbus Traders
+                Unit price ₹49,000 is 11% below the median of all quotes (₹55,000); confirm scope and line items before relying on it.
+  [warn] RECOVER     2 open item(s) escalated
+                Values the documents do not state are not invented; a person must resolve them.
+  [ ok ] VERIFY      Recommended quote satisfies every mandatory criterion
+                All mandatory criteria are proven by the quotation.
+  [ ok ] VERIFY      Recommendation is the highest-scoring eligible quote
+                Apex Computers Pvt Ltd scores 100.0; best eligible is Apex Computers Pvt Ltd at 100.0.
+  [ ok ] VERIFY      Every extracted value is traceable to its source text
+                All evidence snippets were found in the source documents.
+  [ ok ] VERIFY      No open anomaly on the recommended quote
+                No anomaly flags.
+  [ ok ] VERIFY      Consequential action requires human approval
+                Nothing is sent to a vendor until a named approver signs off.
+  [ ok ] RECOMMEND   Recommend Apex Computers Pvt Ltd
+                Score 100.0/100. Lowest compliant unit price. Longest warranty among compliant quotes (36 months). Fastest delivery among compliant quotes (21 days).
+  [ ok ] ACTION      Vendor message drafted (not sent)
+                Held until a named approver signs off.
+  [ ok ] APPROVAL    Waiting for human approval
+                No vendor action is taken automatically.
+
+Ranked quotations
+  1. Apex Computers Pvt Ltd     PASS          score 100.0
+  2. Delta Tech Pvt Ltd         PASS          score  84.2
+  3. Nimbus Traders             NEEDS_REVIEW  score     -
+  4. Budget Byte Ltd            FAIL          score     -
+  5. Summit Systems             FAIL          score     -
+
+Recommendation: Apex Computers Pvt Ltd
+
+Open items
+  - Nimbus Traders: please confirm 'Warranty (min 24 months)', which is not stated in the quotation.
+  - Nimbus Traders: Unit price ₹49,000 is 11% below the median of all quotes (₹55,000); confirm scope and line items before relying on it.
+
+Report written to demo/runs/037e5a90/report.md

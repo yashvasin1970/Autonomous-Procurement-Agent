@@ -1,0 +1,715 @@
+{
+  "run_id": "037e5a90",
+  "created_at": "2026-10-22T05:41:41+00:00",
+  "requirement": {
+    "text": "Purchase request: 20 laptops for the design team.\nWe need to buy 20 laptops for the design team. Minimum processor i5, at least 16 GB RAM and at least 512 GB SSD.\nBudget limit is ₹60K per unit.\nWarranty of at least 2 years.\nDelivery within 30 days of purchase order.\n",
+    "quantity": 20,
+    "criteria": [
+      {
+        "key": "cpu",
+        "op": "min_tier",
+        "value": "i5",
+        "label": "Processor (min i5)",
+        "mandatory": true
+      },
+      {
+        "key": "ram_gb",
+        "op": ">=",
+        "value": 16,
+        "label": "RAM (min 16 GB)",
+        "mandatory": true
+      },
+      {
+        "key": "storage_gb",
+        "op": ">=",
+        "value": 512,
+        "label": "Storage (min 512 GB)",
+        "mandatory": true
+      },
+      {
+        "key": "unit_price",
+        "op": "<=",
+        "value": 60000.0,
+        "label": "Unit price (max ₹60,000)",
+        "mandatory": true
+      },
+      {
+        "key": "warranty_months",
+        "op": ">=",
+        "value": 24,
+        "label": "Warranty (min 24 months)",
+        "mandatory": true
+      },
+      {
+        "key": "delivery_days",
+        "op": "<=",
+        "value": 30,
+        "label": "Delivery (max 30 days)",
+        "mandatory": true
+      }
+    ]
+  },
+  "assessments": [
+    {
+      "quote": {
+        "source": "vendor_a.txt",
+        "text": "QUOTATION No. AC-2026-0412\nVendor: Apex Computers Pvt Ltd\nDate: 14 October 2026\n\nItem: Business laptop (20 units)\nProcessor: Intel Core i5-1235U\nRAM: 16 GB DDR4\nStorage: 512 GB NVMe SSD\nUnit price: ₹55,000 per unit (excluding GST)\nWarranty: 3 years on-site\nDelivery: 21 days from purchase order\nQuote valid for 30 days.\n",
+        "values": {
+          "vendor": "Apex Computers Pvt Ltd",
+          "unit_price": 55000.0,
+          "cpu": "i5",
+          "ram_gb": 16,
+          "storage_gb": 512,
+          "warranty_months": 36,
+          "delivery_days": 21
+        },
+        "evidence": {
+          "vendor": "Vendor: Apex Computers Pvt Ltd",
+          "unit_price": "Unit price: ₹55,000 per unit (excluding GST)",
+          "cpu": "Processor: Intel Core i5-1235U",
+          "ram_gb": "RAM: 16 GB DDR4",
+          "storage_gb": "Storage: 512 GB NVMe SSD",
+          "warranty_months": "Warranty: 3 years on-site",
+          "delivery_days": "Delivery: 21 days from purchase order"
+        },
+        "method": "heuristic",
+        "notes": []
+      },
+      "checks": [
+        {
+          "key": "cpu",
+          "label": "Processor (min i5)",
+          "status": "PASS",
+          "actual": "i5",
+          "reason": "Processor (min i5): quoted i5, meets the requirement."
+        },
+        {
+          "key": "ram_gb",
+          "label": "RAM (min 16 GB)",
+          "status": "PASS",
+          "actual": 16,
+          "reason": "RAM (min 16 GB): quoted 16 GB, meets the requirement."
+        },
+        {
+          "key": "storage_gb",
+          "label": "Storage (min 512 GB)",
+          "status": "PASS",
+          "actual": 512,
+          "reason": "Storage (min 512 GB): quoted 512 GB, meets the requirement."
+        },
+        {
+          "key": "unit_price",
+          "label": "Unit price (max ₹60,000)",
+          "status": "PASS",
+          "actual": 55000.0,
+          "reason": "Unit price (max ₹60,000): quoted ₹55,000, meets the requirement."
+        },
+        {
+          "key": "warranty_months",
+          "label": "Warranty (min 24 months)",
+          "status": "PASS",
+          "actual": 36,
+          "reason": "Warranty (min 24 months): quoted 36 months, meets the requirement."
+        },
+        {
+          "key": "delivery_days",
+          "label": "Delivery (max 30 days)",
+          "status": "PASS",
+          "actual": 21,
+          "reason": "Delivery (max 30 days): quoted 21 days, meets the requirement."
+        }
+      ],
+      "verdict": "PASS",
+      "score": 100.0,
+      "flags": [],
+      "notes": [
+        "Lowest compliant unit price.",
+        "Longest warranty among compliant quotes (36 months).",
+        "Fastest delivery among compliant quotes (21 days)."
+      ]
+    },
+    {
+      "quote": {
+        "source": "vendor_d.xlsx",
+        "text": "Vendor | Delta Tech Pvt Ltd\nProcessor | Intel Core i5\nRAM | 16 GB DDR4\nStorage | 512 GB SSD\nUnit price (INR) | 58,000\nWarranty | 2 years\nDelivery | 30 days",
+        "values": {
+          "vendor": "Delta Tech Pvt Ltd",
+          "unit_price": 58000.0,
+          "cpu": "i5",
+          "ram_gb": 16,
+          "storage_gb": 512,
+          "warranty_months": 24,
+          "delivery_days": 30
+        },
+        "evidence": {
+          "vendor": "Vendor | Delta Tech Pvt Ltd",
+          "unit_price": "Unit price (INR) | 58,000",
+          "cpu": "Processor | Intel Core i5",
+          "ram_gb": "RAM | 16 GB DDR4",
+          "storage_gb": "Storage | 512 GB SSD",
+          "warranty_months": "Warranty | 2 years",
+          "delivery_days": "Delivery | 30 days"
+        },
+        "method": "heuristic",
+        "notes": []
+      },
+      "checks": [
+        {
+          "key": "cpu",
+          "label": "Processor (min i5)",
+          "status": "PASS",
+          "actual": "i5",
+          "reason": "Processor (min i5): quoted i5, meets the requirement."
+        },
+        {
+          "key": "ram_gb",
+          "label": "RAM (min 16 GB)",
+          "status": "PASS",
+          "actual": 16,
+          "reason": "RAM (min 16 GB): quoted 16 GB, meets the requirement."
+        },
+        {
+          "key": "storage_gb",
+          "label": "Storage (min 512 GB)",
+          "status": "PASS",
+          "actual": 512,
+          "reason": "Storage (min 512 GB): quoted 512 GB, meets the requirement."
+        },
+        {
+          "key": "unit_price",
+          "label": "Unit price (max ₹60,000)",
+          "status": "PASS",
+          "actual": 58000.0,
+          "reason": "Unit price (max ₹60,000): quoted ₹58,000, meets the requirement."
+        },
+        {
+          "key": "warranty_months",
+          "label": "Warranty (min 24 months)",
+          "status": "PASS",
+          "actual": 24,
+          "reason": "Warranty (min 24 months): quoted 24 months, meets the requirement."
+        },
+        {
+          "key": "delivery_days",
+          "label": "Delivery (max 30 days)",
+          "status": "PASS",
+          "actual": 30,
+          "reason": "Delivery (max 30 days): quoted 30 days, meets the requirement."
+        }
+      ],
+      "verdict": "PASS",
+      "score": 84.2,
+      "flags": [],
+      "notes": [
+        "₹3,000 per unit above the lowest compliant price.",
+        "Warranty 24 months vs 36 months best offered.",
+        "Delivery 30 days vs 21 days fastest."
+      ]
+    },
+    {
+      "quote": {
+        "source": "vendor_e.txt",
+        "text": "Vendor: Nimbus Traders\nProcessor: Intel Core i5-1235U\nRAM: 16 GB\nStorage: 512 GB SSD\nUnit price: ₹49,000 per unit\nDelivery: 14 days\nSupport: email helpdesk, 9am to 6pm on working days\n",
+        "values": {
+          "vendor": "Nimbus Traders",
+          "unit_price": 49000.0,
+          "cpu": "i5",
+          "ram_gb": 16,
+          "storage_gb": 512,
+          "warranty_months": null,
+          "delivery_days": 14
+        },
+        "evidence": {
+          "vendor": "Vendor: Nimbus Traders",
+          "unit_price": "Unit price: ₹49,000 per unit",
+          "cpu": "Processor: Intel Core i5-1235U",
+          "ram_gb": "RAM: 16 GB",
+          "storage_gb": "Storage: 512 GB SSD",
+          "delivery_days": "Delivery: 14 days"
+        },
+        "method": "heuristic",
+        "notes": []
+      },
+      "checks": [
+        {
+          "key": "cpu",
+          "label": "Processor (min i5)",
+          "status": "PASS",
+          "actual": "i5",
+          "reason": "Processor (min i5): quoted i5, meets the requirement."
+        },
+        {
+          "key": "ram_gb",
+          "label": "RAM (min 16 GB)",
+          "status": "PASS",
+          "actual": 16,
+          "reason": "RAM (min 16 GB): quoted 16 GB, meets the requirement."
+        },
+        {
+          "key": "storage_gb",
+          "label": "Storage (min 512 GB)",
+          "status": "PASS",
+          "actual": 512,
+          "reason": "Storage (min 512 GB): quoted 512 GB, meets the requirement."
+        },
+        {
+          "key": "unit_price",
+          "label": "Unit price (max ₹60,000)",
+          "status": "PASS",
+          "actual": 49000.0,
+          "reason": "Unit price (max ₹60,000): quoted ₹49,000, meets the requirement."
+        },
+        {
+          "key": "warranty_months",
+          "label": "Warranty (min 24 months)",
+          "status": "UNKNOWN",
+          "actual": null,
+          "reason": "Warranty (min 24 months): not stated in the quotation; clarification needed."
+        },
+        {
+          "key": "delivery_days",
+          "label": "Delivery (max 30 days)",
+          "status": "PASS",
+          "actual": 14,
+          "reason": "Delivery (max 30 days): quoted 14 days, meets the requirement."
+        }
+      ],
+      "verdict": "NEEDS_REVIEW",
+      "score": null,
+      "flags": [
+        "Unit price ₹49,000 is 11% below the median of all quotes (₹55,000); confirm scope and line items before relying on it."
+      ],
+      "notes": []
+    },
+    {
+      "quote": {
+        "source": "vendor_b.txt",
+        "text": "Vendor: Budget Byte Ltd\nQuotation ref: BB/Q/0991\nProcessor: Intel Core i5-1135G7\nMemory (RAM): 8 GB DDR4\nStorage: 512 GB SSD\nUnit price: Rs. 51,000 per unit\nWarranty: 2 years carry-in\nDelivery: 10 days\n",
+        "values": {
+          "vendor": "Budget Byte Ltd",
+          "unit_price": 51000.0,
+          "cpu": "i5",
+          "ram_gb": 8,
+          "storage_gb": 512,
+          "warranty_months": 24,
+          "delivery_days": 10
+        },
+        "evidence": {
+          "vendor": "Vendor: Budget Byte Ltd",
+          "unit_price": "Unit price: Rs. 51,000 per unit",
+          "cpu": "Processor: Intel Core i5-1135G7",
+          "ram_gb": "Memory (RAM): 8 GB DDR4",
+          "storage_gb": "Storage: 512 GB SSD",
+          "warranty_months": "Warranty: 2 years carry-in",
+          "delivery_days": "Delivery: 10 days"
+        },
+        "method": "heuristic",
+        "notes": []
+      },
+      "checks": [
+        {
+          "key": "cpu",
+          "label": "Processor (min i5)",
+          "status": "PASS",
+          "actual": "i5",
+          "reason": "Processor (min i5): quoted i5, meets the requirement."
+        },
+        {
+          "key": "ram_gb",
+          "label": "RAM (min 16 GB)",
+          "status": "FAIL",
+          "actual": 8,
+          "reason": "RAM (min 16 GB): quoted 8 GB, but the requirement is at least 16 GB."
+        },
+        {
+          "key": "storage_gb",
+          "label": "Storage (min 512 GB)",
+          "status": "PASS",
+          "actual": 512,
+          "reason": "Storage (min 512 GB): quoted 512 GB, meets the requirement."
+        },
+        {
+          "key": "unit_price",
+          "label": "Unit price (max ₹60,000)",
+          "status": "PASS",
+          "actual": 51000.0,
+          "reason": "Unit price (max ₹60,000): quoted ₹51,000, meets the requirement."
+        },
+        {
+          "key": "warranty_months",
+          "label": "Warranty (min 24 months)",
+          "status": "PASS",
+          "actual": 24,
+          "reason": "Warranty (min 24 months): quoted 24 months, meets the requirement."
+        },
+        {
+          "key": "delivery_days",
+          "label": "Delivery (max 30 days)",
+          "status": "PASS",
+          "actual": 10,
+          "reason": "Delivery (max 30 days): quoted 10 days, meets the requirement."
+        }
+      ],
+      "verdict": "FAIL",
+      "score": null,
+      "flags": [],
+      "notes": []
+    },
+    {
+      "quote": {
+        "source": "vendor_c.txt",
+        "text": "Vendor: Summit Systems\nProcessor: Intel Core i7-1260P\nRAM: 16 GB\nStorage: 1 TB PCIe SSD\nUnit price: INR 72,000\nWarranty: 2 years\nDelivery: 14 days\n",
+        "values": {
+          "vendor": "Summit Systems",
+          "unit_price": 72000.0,
+          "cpu": "i7",
+          "ram_gb": 16,
+          "storage_gb": 1024,
+          "warranty_months": 24,
+          "delivery_days": 14
+        },
+        "evidence": {
+          "vendor": "Vendor: Summit Systems",
+          "unit_price": "Unit price: INR 72,000",
+          "cpu": "Processor: Intel Core i7-1260P",
+          "ram_gb": "RAM: 16 GB",
+          "storage_gb": "Storage: 1 TB PCIe SSD",
+          "warranty_months": "Warranty: 2 years",
+          "delivery_days": "Delivery: 14 days"
+        },
+        "method": "heuristic",
+        "notes": []
+      },
+      "checks": [
+        {
+          "key": "cpu",
+          "label": "Processor (min i5)",
+          "status": "PASS",
+          "actual": "i7",
+          "reason": "Processor (min i5): quoted i7, meets the requirement."
+        },
+        {
+          "key": "ram_gb",
+          "label": "RAM (min 16 GB)",
+          "status": "PASS",
+          "actual": 16,
+          "reason": "RAM (min 16 GB): quoted 16 GB, meets the requirement."
+        },
+        {
+          "key": "storage_gb",
+          "label": "Storage (min 512 GB)",
+          "status": "PASS",
+          "actual": 1024,
+          "reason": "Storage (min 512 GB): quoted 1 TB, meets the requirement."
+        },
+        {
+          "key": "unit_price",
+          "label": "Unit price (max ₹60,000)",
+          "status": "FAIL",
+          "actual": 72000.0,
+          "reason": "Unit price (max ₹60,000): quoted ₹72,000, but the requirement is at most ₹60,000."
+        },
+        {
+          "key": "warranty_months",
+          "label": "Warranty (min 24 months)",
+          "status": "PASS",
+          "actual": 24,
+          "reason": "Warranty (min 24 months): quoted 24 months, meets the requirement."
+        },
+        {
+          "key": "delivery_days",
+          "label": "Delivery (max 30 days)",
+          "status": "PASS",
+          "actual": 14,
+          "reason": "Delivery (max 30 days): quoted 14 days, meets the requirement."
+        }
+      ],
+      "verdict": "FAIL",
+      "score": null,
+      "flags": [],
+      "notes": []
+    }
+  ],
+  "recommendation": {
+    "quote": {
+      "source": "vendor_a.txt",
+      "text": "QUOTATION No. AC-2026-0412\nVendor: Apex Computers Pvt Ltd\nDate: 14 October 2026\n\nItem: Business laptop (20 units)\nProcessor: Intel Core i5-1235U\nRAM: 16 GB DDR4\nStorage: 512 GB NVMe SSD\nUnit price: ₹55,000 per unit (excluding GST)\nWarranty: 3 years on-site\nDelivery: 21 days from purchase order\nQuote valid for 30 days.\n",
+      "values": {
+        "vendor": "Apex Computers Pvt Ltd",
+        "unit_price": 55000.0,
+        "cpu": "i5",
+        "ram_gb": 16,
+        "storage_gb": 512,
+        "warranty_months": 36,
+        "delivery_days": 21
+      },
+      "evidence": {
+        "vendor": "Vendor: Apex Computers Pvt Ltd",
+        "unit_price": "Unit price: ₹55,000 per unit (excluding GST)",
+        "cpu": "Processor: Intel Core i5-1235U",
+        "ram_gb": "RAM: 16 GB DDR4",
+        "storage_gb": "Storage: 512 GB NVMe SSD",
+        "warranty_months": "Warranty: 3 years on-site",
+        "delivery_days": "Delivery: 21 days from purchase order"
+      },
+      "method": "heuristic",
+      "notes": []
+    },
+    "checks": [
+      {
+        "key": "cpu",
+        "label": "Processor (min i5)",
+        "status": "PASS",
+        "actual": "i5",
+        "reason": "Processor (min i5): quoted i5, meets the requirement."
+      },
+      {
+        "key": "ram_gb",
+        "label": "RAM (min 16 GB)",
+        "status": "PASS",
+        "actual": 16,
+        "reason": "RAM (min 16 GB): quoted 16 GB, meets the requirement."
+      },
+      {
+        "key": "storage_gb",
+        "label": "Storage (min 512 GB)",
+        "status": "PASS",
+        "actual": 512,
+        "reason": "Storage (min 512 GB): quoted 512 GB, meets the requirement."
+      },
+      {
+        "key": "unit_price",
+        "label": "Unit price (max ₹60,000)",
+        "status": "PASS",
+        "actual": 55000.0,
+        "reason": "Unit price (max ₹60,000): quoted ₹55,000, meets the requirement."
+      },
+      {
+        "key": "warranty_months",
+        "label": "Warranty (min 24 months)",
+        "status": "PASS",
+        "actual": 36,
+        "reason": "Warranty (min 24 months): quoted 36 months, meets the requirement."
+      },
+      {
+        "key": "delivery_days",
+        "label": "Delivery (max 30 days)",
+        "status": "PASS",
+        "actual": 21,
+        "reason": "Delivery (max 30 days): quoted 21 days, meets the requirement."
+      }
+    ],
+    "verdict": "PASS",
+    "score": 100.0,
+    "flags": [],
+    "notes": [
+      "Lowest compliant unit price.",
+      "Longest warranty among compliant quotes (36 months).",
+      "Fastest delivery among compliant quotes (21 days)."
+    ]
+  },
+  "verification": [
+    {
+      "name": "Recommended quote satisfies every mandatory criterion",
+      "passed": true,
+      "detail": "All mandatory criteria are proven by the quotation."
+    },
+    {
+      "name": "Recommendation is the highest-scoring eligible quote",
+      "passed": true,
+      "detail": "Apex Computers Pvt Ltd scores 100.0; best eligible is Apex Computers Pvt Ltd at 100.0."
+    },
+    {
+      "name": "Every extracted value is traceable to its source text",
+      "passed": true,
+      "detail": "All evidence snippets were found in the source documents."
+    },
+    {
+      "name": "No open anomaly on the recommended quote",
+      "passed": true,
+      "detail": "No anomaly flags."
+    },
+    {
+      "name": "Consequential action requires human approval",
+      "passed": true,
+      "detail": "Nothing is sent to a vendor until a named approver signs off."
+    }
+  ],
+  "clarifications": [
+    "Nimbus Traders: please confirm 'Warranty (min 24 months)', which is not stated in the quotation.",
+    "Nimbus Traders: Unit price ₹49,000 is 11% below the median of all quotes (₹55,000); confirm scope and line items before relying on it."
+  ],
+  "gaps": [],
+  "trace": [
+    {
+      "stage": "INPUT",
+      "title": "Purchase request received",
+      "detail": "51 words, 5 quotation document(s).",
+      "status": "ok"
+    },
+    {
+      "stage": "PLAN",
+      "title": "Mandatory criteria extracted",
+      "detail": "Processor (min i5); RAM (min 16 GB); Storage (min 512 GB); Unit price (max ₹60,000); Warranty (min 24 months); Delivery (max 30 days)",
+      "status": "ok"
+    },
+    {
+      "stage": "TOOL_USE",
+      "title": "Read vendor_a.txt",
+      "detail": "Vendor: Apex Computers Pvt Ltd; 6/6 fields found; method: heuristic",
+      "status": "ok"
+    },
+    {
+      "stage": "TOOL_USE",
+      "title": "Read vendor_b.txt",
+      "detail": "Vendor: Budget Byte Ltd; 6/6 fields found; method: heuristic",
+      "status": "ok"
+    },
+    {
+      "stage": "TOOL_USE",
+      "title": "Read vendor_c.txt",
+      "detail": "Vendor: Summit Systems; 6/6 fields found; method: heuristic",
+      "status": "ok"
+    },
+    {
+      "stage": "TOOL_USE",
+      "title": "Read vendor_d.xlsx",
+      "detail": "Vendor: Delta Tech Pvt Ltd; 6/6 fields found; method: heuristic",
+      "status": "ok"
+    },
+    {
+      "stage": "TOOL_USE",
+      "title": "Read vendor_e.txt",
+      "detail": "Vendor: Nimbus Traders; 5/6 fields found; method: heuristic",
+      "status": "ok"
+    },
+    {
+      "stage": "NORMALIZE",
+      "title": "Apex Computers Pvt Ltd: mapped to common schema",
+      "detail": "All fields mapped.",
+      "status": "ok"
+    },
+    {
+      "stage": "NORMALIZE",
+      "title": "Budget Byte Ltd: mapped to common schema",
+      "detail": "All fields mapped.",
+      "status": "ok"
+    },
+    {
+      "stage": "NORMALIZE",
+      "title": "Summit Systems: mapped to common schema",
+      "detail": "All fields mapped.",
+      "status": "ok"
+    },
+    {
+      "stage": "NORMALIZE",
+      "title": "Delta Tech Pvt Ltd: mapped to common schema",
+      "detail": "All fields mapped.",
+      "status": "ok"
+    },
+    {
+      "stage": "NORMALIZE",
+      "title": "Nimbus Traders: mapped to common schema",
+      "detail": "Missing: warranty_months",
+      "status": "warn"
+    },
+    {
+      "stage": "CONSTRAINT",
+      "title": "Apex Computers Pvt Ltd: PASS",
+      "detail": "Meets every mandatory criterion.",
+      "status": "ok"
+    },
+    {
+      "stage": "CONSTRAINT",
+      "title": "Budget Byte Ltd: FAIL",
+      "detail": "RAM (min 16 GB): quoted 8 GB, but the requirement is at least 16 GB.",
+      "status": "error"
+    },
+    {
+      "stage": "CONSTRAINT",
+      "title": "Summit Systems: FAIL",
+      "detail": "Unit price (max ₹60,000): quoted ₹72,000, but the requirement is at most ₹60,000.",
+      "status": "error"
+    },
+    {
+      "stage": "CONSTRAINT",
+      "title": "Delta Tech Pvt Ltd: PASS",
+      "detail": "Meets every mandatory criterion.",
+      "status": "ok"
+    },
+    {
+      "stage": "CONSTRAINT",
+      "title": "Nimbus Traders: NEEDS_REVIEW",
+      "detail": "Warranty (min 24 months): not stated in the quotation; clarification needed.",
+      "status": "warn"
+    },
+    {
+      "stage": "COMPARE",
+      "title": "Scored compliant quotes",
+      "detail": "2 of 5 quotation(s) pass every mandatory criterion.",
+      "status": "ok"
+    },
+    {
+      "stage": "COMPARE",
+      "title": "Anomaly flagged: Nimbus Traders",
+      "detail": "Unit price ₹49,000 is 11% below the median of all quotes (₹55,000); confirm scope and line items before relying on it.",
+      "status": "warn"
+    },
+    {
+      "stage": "RECOVER",
+      "title": "2 open item(s) escalated",
+      "detail": "Values the documents do not state are not invented; a person must resolve them.",
+      "status": "warn"
+    },
+    {
+      "stage": "VERIFY",
+      "title": "Recommended quote satisfies every mandatory criterion",
+      "detail": "All mandatory criteria are proven by the quotation.",
+      "status": "ok"
+    },
+    {
+      "stage": "VERIFY",
+      "title": "Recommendation is the highest-scoring eligible quote",
+      "detail": "Apex Computers Pvt Ltd scores 100.0; best eligible is Apex Computers Pvt Ltd at 100.0.",
+      "status": "ok"
+    },
+    {
+      "stage": "VERIFY",
+      "title": "Every extracted value is traceable to its source text",
+      "detail": "All evidence snippets were found in the source documents.",
+      "status": "ok"
+    },
+    {
+      "stage": "VERIFY",
+      "title": "No open anomaly on the recommended quote",
+      "detail": "No anomaly flags.",
+      "status": "ok"
+    },
+    {
+      "stage": "VERIFY",
+      "title": "Consequential action requires human approval",
+      "detail": "Nothing is sent to a vendor until a named approver signs off.",
+      "status": "ok"
+    },
+    {
+      "stage": "RECOMMEND",
+      "title": "Recommend Apex Computers Pvt Ltd",
+      "detail": "Score 100.0/100. Lowest compliant unit price. Longest warranty among compliant quotes (36 months). Fastest delivery among compliant quotes (21 days).",
+      "status": "ok"
+    },
+    {
+      "stage": "ACTION",
+      "title": "Vendor message drafted (not sent)",
+      "detail": "Held until a named approver signs off.",
+      "status": "ok"
+    },
+    {
+      "stage": "APPROVAL",
+      "title": "Waiting for human approval",
+      "detail": "No vendor action is taken automatically.",
+      "status": "ok"
+    }
+  ],
+  "status": "AWAITING_APPROVAL",
+  "draft_message": "Subject: Quotation under review - 20 units\n\nDear Apex Computers Pvt Ltd,\n\nThank you for your quotation. Your offer for 20 units at ₹55,000 per unit is under review. Before a purchase order is issued, please confirm in writing the stock availability, delivery timeline and warranty terms.\n\nRegards,\nProcurement Team"
+}
